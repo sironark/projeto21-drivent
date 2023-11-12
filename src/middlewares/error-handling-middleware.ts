@@ -8,12 +8,6 @@ export function handleApplicationErrors(
   res: Response,
   next: NextFunction,
 ) {
-  if (err.name === 'InvalidErrorCep') {
-    return res.status(httpStatus.BAD_REQUEST).send({
-      message: err.message,
-    });
-  }
-
   if (err.name === 'CannotEnrollBeforeStartDateError') {
     return res.status(httpStatus.BAD_REQUEST).send({
       message: err.message,
@@ -32,7 +26,7 @@ export function handleApplicationErrors(
     });
   }
 
-  if (err.name === 'InvalidDataError') {
+  if (err.name === 'InvalidDataError' || err.name === 'InvalidCEPError') {
     return res.status(httpStatus.BAD_REQUEST).send({
       message: err.message,
     });

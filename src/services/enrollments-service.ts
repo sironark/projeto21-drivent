@@ -3,25 +3,26 @@ import { request } from '@/utils/request';
 import { notFoundError } from '@/errors';
 import { addressRepository, CreateAddressParams, enrollmentRepository, CreateEnrollmentParams } from '@/repositories';
 import { exclude } from '@/utils/prisma-utils';
-import { invalidErrorCep } from '@/errors/invalid-cep-error';
-import { CepError, EnrollmentAddress } from '@/protocols/protocols';
+import { invalidCepError } from '@/errors/invalid-cep-error';
+import { AddressEnrollment } from '@/protocols';
 
-async function getAddressFromCEP(cep: string) {
+async function getAddressFromCEP(cep: string): Promise<AddressEnrollment> {
   const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
-  //console.log(cep);
-  if ((result.data.error as CepError) || !result.data) {
-    throw invalidErrorCep();
+
+  if (!result.data || result.data.erro) {
+    throw invalidCepError();
   }
 
-  const answare: EnrollmentAddress = {
-    logradouro: result.data.logradouro,
-    complemento: result.data.complemento,
-    bairro: result.data.bairro,
-    cidade: result.data.localidade,
-    uf: result.data.uf,
+  const { bairro, localidade, uf, logradouro, complemento } = result.data;
+  const address: AddressEnrollment = {
+    bairro,
+    uf,
+    complemento,
+    logradouro,
+    cidade: localidade,
   };
 
-  return answare;
+  return address;
 }
 
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
@@ -48,12 +49,12 @@ function getFirstAddress(firstAddress: Address): GetAddressResult {
 
 type GetAddressResult = Omit<Address, 'createdAt' | 'updatedAt' | 'enrollmentId'>;
 
-async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
+async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress): Promise<void> {
   const enrollment = exclude(params, 'address');
   enrollment.birthday = new Date(enrollment.birthday);
   const address = getAddressForUpsert(params.address);
 
-  getAddressFromCEP(address.cep);
+  await getAddressFromCEP(address.cep);
 
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, 'userId'));
 

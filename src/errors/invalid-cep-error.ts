@@ -1,8 +1,8 @@
 import { ApplicationError } from '@/protocols';
 
-export function invalidErrorCep(): ApplicationError {
+export function invalidCepError(): ApplicationError {
   return {
-    name: 'InvalidErrorCep',
-    message: 'Cep does not exists',
+    name: 'InvalidCEPError',
+    message: 'Invalid CEP search',
   };
 }
