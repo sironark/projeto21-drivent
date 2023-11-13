@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { eventsService, ticketsService } from '@/services';
 import { AuthenticatedRequest } from '@/middlewares';
+import { notFoundError } from '@/errors';
 
 export async function getDefaultEvent(_req: Request, res: Response) {
   const event = await eventsService.getFirstEvent();
@@ -15,6 +16,7 @@ async function getTypesController(req: AuthenticatedRequest, res: Response) {
 }
 async function getTicket(req: AuthenticatedRequest, res: Response) {
   const gotTicket = await ticketsService.getTicketServices(req.userId);
+  if (!gotTicket) throw notFoundError();
 
   res.status(httpStatus.OK).send(gotTicket);
 }
