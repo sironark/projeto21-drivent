@@ -5,7 +5,13 @@ async function getTypesServices() {
 
   return answare;
 }
+async function getTicketServices(userId: number) {
+  const answare = await eventRepository.getTicket(userId);
+
+  return answare;
+}
 
 export const ticketsService = {
   getTypesServices,
+  getTicketServices,
 };
