@@ -49,7 +49,26 @@ async function postBooking(userId: number, roomId: number) {
   };
 }
 
+async function changeBooking(roomId: number, bookingId: number) {
+  const room = await bookingRepository.findUniqueRoom(roomId);
+  if (!room) throw notFoundError();
+
+  const reserveds = await bookingRepository.findRoomById(roomId);
+
+  if (reserveds.length >= room.capacity) throw aboveCapacity('Above Capacity');
+
+  const booking = await bookingRepository.findUniqueBooking(Number(bookingId));
+  if (!booking) throw aboveCapacity('user does not has booking - forbidden action');
+
+  const changedBooking = await bookingRepository.updateBooking(Number(bookingId), roomId);
+
+  return {
+    bookingId: changedBooking.id,
+  };
+}
+
 export const bookingService = {
   getBooking,
   postBooking,
+  changeBooking,
 };

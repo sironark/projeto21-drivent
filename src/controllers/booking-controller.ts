@@ -18,3 +18,12 @@ export async function postBooking(req: AuthenticatedRequest, res: Response) {
 
   res.status(httpStatus.OK).send(generateBooking);
 }
+
+export async function putBooking(req: AuthenticatedRequest, res: Response) {
+  const { roomId } = req.body;
+  const { bookingId } = req.params;
+
+  const answare = await bookingService.changeBooking(roomId, Number(bookingId));
+
+  res.status(httpStatus.OK).send(answare);
+}
