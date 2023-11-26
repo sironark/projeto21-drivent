@@ -1,6 +1,5 @@
 import { TicketStatus } from '@prisma/client';
 import { aboveCapacity, notFoundError } from '@/errors';
-import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
 import { bookingRepository, enrollmentRepository, ticketsRepository } from '@/repositories';
 
 async function validateUserBooking(userId: number) {
@@ -13,7 +12,7 @@ async function validateUserBooking(userId: number) {
   const type = ticket.TicketType;
 
   if (ticket.status === TicketStatus.RESERVED || type.isRemote || !type.includesHotel) {
-    throw cannotListHotelsError();
+    throw aboveCapacity(`ticket not paid, does not include hotel or remote reservation`);
   }
 }
 
