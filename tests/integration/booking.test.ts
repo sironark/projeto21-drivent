@@ -15,7 +15,7 @@ import {
 import { createHotel, createRoomWithHotelId } from '../factories/hotels-factory';
 import app, { init } from '@/app';
 
-async function generateAllData(isRemote: boolean, includesHotel: boolean) {
+export async function generateAllData(isRemote: boolean, includesHotel: boolean) {
   const user: User = await createUser();
   const token = await generateValidToken(user);
 
@@ -30,7 +30,7 @@ async function generateAllData(isRemote: boolean, includesHotel: boolean) {
   return { user, token, room, enrollment, hotel, booking };
 }
 
-async function generateDataDevoidBooking(isRemote: boolean, includesHotel: boolean) {
+export async function generateDataDevoidBooking(isRemote: boolean, includesHotel: boolean) {
   const user: User = await createUser();
   const token = await generateValidToken(user);
 

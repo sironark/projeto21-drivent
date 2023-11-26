@@ -14,6 +14,7 @@ async function validateUserBooking(userId: number) {
   if (ticket.status === TicketStatus.RESERVED || type.isRemote || !type.includesHotel) {
     throw aboveCapacity(`ticket not paid, does not include hotel or remote reservation`);
   }
+  return true;
 }
 
 async function getBooking(userId: number) {
@@ -71,4 +72,5 @@ export const bookingService = {
   getBooking,
   postBooking,
   changeBooking,
+  validateUserBooking,
 };
